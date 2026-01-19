@@ -216,6 +216,10 @@ impl TimePickerSimple {
     }
 }
 
+const COL_WIDTH: f32 = 40.0;
+const ROW_HEIGHT: f32 = 32.0;
+
+
 impl Widget for &mut TimePickerSimple {
     fn ui(self, ui: &mut Ui) -> Response {
         let response = ui.button(format!("{:02}:{:02}", self.hour, self.minute));
@@ -234,7 +238,9 @@ impl Widget for &mut TimePickerSimple {
                         ui.horizontal(|ui| {
                             // Hour column
                             ui.vertical(|ui| {
-                                if ui.button("^").clicked() {
+                                if ui.add_sized(
+                                    [COL_WIDTH, ROW_HEIGHT],
+                                    egui::Button::new("^")).clicked() {
                                     self.inc_hour();
                                 }
 
@@ -243,7 +249,9 @@ impl Widget for &mut TimePickerSimple {
                                         .size(24.0),
                                 );
 
-                                if ui.button("v").clicked() {
+                                if ui.add_sized(
+                                    [COL_WIDTH, ROW_HEIGHT],
+                                    egui::Button::new("v")).clicked() {
                                     self.dec_hour();
                                 }
                             });
@@ -254,7 +262,9 @@ impl Widget for &mut TimePickerSimple {
 
                             // Minute column
                             ui.vertical(|ui| {
-                                if ui.button("^").clicked() {
+                                if ui.add_sized(
+                                    [COL_WIDTH, ROW_HEIGHT],
+                                    egui::Button::new("^")).clicked() {
                                     self.inc_minute();
                                 }
 
@@ -263,7 +273,9 @@ impl Widget for &mut TimePickerSimple {
                                         .size(24.0),
                                 );
 
-                                if ui.button("v").clicked() {
+                                if ui.add_sized(
+                                    [COL_WIDTH, ROW_HEIGHT],
+                                    egui::Button::new("v")).clicked() {
                                     self.dec_minute();
                                 }
                             });
