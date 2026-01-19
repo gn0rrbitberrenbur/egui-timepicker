@@ -1,4 +1,4 @@
-use egui_timepicker::TimePicker;
+use egui_timepicker::{TimePickerWatch, TimePickerSimple};
 
 fn main() -> eframe::Result<()> {
     let options = eframe::NativeOptions::default();
@@ -11,7 +11,8 @@ fn main() -> eframe::Result<()> {
 
 #[derive(Default)]
 struct App {
-    picker: TimePicker,
+    picker_watch: TimePickerWatch,
+    picker_simple: TimePickerSimple
 }
 
 impl eframe::App for App {
@@ -30,15 +31,26 @@ impl eframe::App for App {
         ctx.set_style(style);
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.add(&mut self.picker);
+            ui.add(&mut self.picker_watch);
 
-            let (hour, minute) = self.picker.time();
+            let (hour_watch, minute_watch) = self.picker_watch.time();
 
             ui.add_space(10.0);
 
             ui.label(format!(
                 "Chosen time: {:02}:{:02}",
-                hour, minute
+                hour_watch, minute_watch
+            ));
+
+            ui.add(&mut self.picker_simple);
+
+            let (hour_simple, minute_simple) = self.picker_simple.time();
+
+            ui.add_space(10.0);
+
+            ui.label(format!(
+                "Chosen time: {:02}:{:02}",
+                hour_simple, minute_simple 
             ));
         });
     }

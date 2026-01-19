@@ -7,4 +7,4 @@ cd egui-timepicker
 cargo run --example demo
 ```
 
-To see an usage example see `../examples/demo.rs`.
+To see an usage example see [`../examples/demo.rs`](egui-timepicker\examples\demo.rs).

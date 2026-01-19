@@ -1,7 +1,7 @@
 use egui::*;
 
 #[derive(Clone, Debug)]
-pub struct TimePicker {
+pub struct TimePickerWatch {
     hour: u8,
     minute: u8,
     open: bool,
@@ -15,13 +15,13 @@ enum DragTarget {
     Minute,
 }
 
-impl Default for TimePicker {
+impl Default for TimePickerWatch {
     fn default() -> Self {
         Self::new(12, 0)
     }
 }
 
-impl TimePicker {
+impl TimePickerWatch {
     pub fn new(hour: u8, minute: u8) -> Self {
         Self {
             hour: hour.min(23),
@@ -36,7 +36,7 @@ impl TimePicker {
     }
 }
 
-impl Widget for &mut TimePicker {
+impl Widget for &mut TimePickerWatch {
     fn ui(self, ui: &mut Ui) -> Response {
         let response = ui.button(format!("{:02}:{:02}", self.hour, self.minute));
 
@@ -75,7 +75,7 @@ impl Widget for &mut TimePicker {
     }
 }
 
-fn draw_clock(ui: &mut Ui, picker: &mut TimePicker) {
+fn draw_clock(ui: &mut Ui, picker: &mut TimePickerWatch) {
     let size = 220.0;
     let (rect, response) =
         ui.allocate_exact_size(vec2(size, size), Sense::drag());
@@ -175,4 +175,109 @@ fn draw_hand(
         [center, end],
         Stroke::new(width, color),
     );
+}
+
+#[derive(Clone, Debug)]
+pub struct TimePickerSimple {
+    hour: u8,
+    minute: u8,
+    open: bool,
+}
+
+impl Default for TimePickerSimple {
+    fn default() -> Self {
+        Self {
+            hour: 12,
+            minute: 0,
+            open: false,
+        }
+    }
+}
+
+impl TimePickerSimple {
+    pub fn time(&self) -> (u8, u8) {
+        (self.hour, self.minute)
+    }
+
+    fn inc_hour(&mut self) {
+        self.hour = (self.hour + 1) % 24;
+    }
+
+    fn dec_hour(&mut self) {
+        self.hour = if self.hour == 0 { 23 } else { self.hour - 1 };
+    }
+
+    fn inc_minute(&mut self) {
+        self.minute = (self.minute + 1) % 60;
+    }
+
+    fn dec_minute(&mut self) {
+        self.minute = if self.minute == 0 { 59 } else { self.minute - 1 };
+    }
+}
+
+impl Widget for &mut TimePickerSimple {
+    fn ui(self, ui: &mut Ui) -> Response {
+        let response = ui.button(format!("{:02}:{:02}", self.hour, self.minute));
+
+        if response.clicked() {
+            self.open = true;
+        }
+
+        if self.open {
+            Window::new("Timepicker")
+                .collapsible(false)
+                .resizable(false)
+                .anchor(Align2::CENTER_CENTER, [0.0, 0.0])
+                .show(ui.ctx(), |ui| {
+                    ui.vertical_centered(|ui| {
+                        ui.horizontal(|ui| {
+                            // Hour column
+                            ui.vertical(|ui| {
+                                if ui.button("^").clicked() {
+                                    self.inc_hour();
+                                }
+
+                                ui.label(
+                                    RichText::new(format!("{:02}", self.hour))
+                                        .size(24.0),
+                                );
+
+                                if ui.button("v").clicked() {
+                                    self.dec_hour();
+                                }
+                            });
+
+                            ui.add_space(8.0);
+                            ui.label(RichText::new(":").size(24.0));
+                            ui.add_space(8.0);
+
+                            // Minute column
+                            ui.vertical(|ui| {
+                                if ui.button("^").clicked() {
+                                    self.inc_minute();
+                                }
+
+                                ui.label(
+                                    RichText::new(format!("{:02}", self.minute))
+                                        .size(24.0),
+                                );
+
+                                if ui.button("v").clicked() {
+                                    self.dec_minute();
+                                }
+                            });
+                        });
+                    });
+
+                    ui.add_space(10.0);
+
+                    if ui.button("OK").clicked() {
+                        self.open = false;
+                    }
+                });
+        }
+
+        response
+    }
 }
