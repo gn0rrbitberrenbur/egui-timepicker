@@ -154,7 +154,7 @@ fn draw_clock(ui: &mut Ui, picker: &mut TimePickerWatch) {
         }
     }
 
-    if response.drag_released() {
+    if response.drag_stopped() {
         picker.dragging = DragTarget::None;
     }
 }
@@ -291,5 +291,92 @@ impl Widget for &mut TimePickerSimple {
         }
 
         response
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct InlineTimePickerSimple {
+    hour: u8,
+    minute: u8,
+}
+
+impl Default for InlineTimePickerSimple {
+    fn default() -> Self {
+        Self {
+            hour: 12,
+            minute: 0,
+        }
+    }
+}
+
+impl InlineTimePickerSimple {
+    pub fn time(&self) -> (u8, u8) {
+        (self.hour, self.minute)
+    }
+
+    fn inc_hour(&mut self) {
+        self.hour = (self.hour + 1) % 24;
+    }
+
+    fn dec_hour(&mut self) {
+        self.hour = if self.hour == 0 { 23 } else { self.hour - 1 };
+    }
+
+    fn inc_minute(&mut self) {
+        self.minute = (self.minute + 1) % 60;
+    }
+
+    fn dec_minute(&mut self) {
+        self.minute = if self.minute == 0 { 59 } else { self.minute - 1 };
+    }
+}
+
+impl Widget for &mut InlineTimePickerSimple {
+    fn ui(self, ui: &mut Ui) -> Response {
+        ui.horizontal(|ui| {
+            // Hour column
+            ui.vertical(|ui| {
+                if ui.add_sized(
+                    [COL_WIDTH, ROW_HEIGHT],
+                    egui::Button::new("^")).clicked() {
+                    self.inc_hour();
+                }
+
+                ui.label(
+                    RichText::new(format!("{:02}", self.hour))
+                        .size(24.0),
+                );
+
+                if ui.add_sized(
+                    [COL_WIDTH, ROW_HEIGHT],
+                    egui::Button::new("v")).clicked() {
+                    self.dec_hour();
+                }
+            });
+
+            ui.add_space(8.0);
+            ui.label(RichText::new(":").size(24.0));
+            ui.add_space(8.0);
+
+            // Minute column
+            ui.vertical(|ui| {
+                if ui.add_sized(
+                    [COL_WIDTH, ROW_HEIGHT],
+                    egui::Button::new("^")).clicked() {
+                    self.inc_minute();
+                }
+
+                ui.label(
+                    RichText::new(format!("{:02}", self.minute))
+                        .size(24.0),
+                );
+
+                if ui.add_sized(
+                    [COL_WIDTH, ROW_HEIGHT],
+                    egui::Button::new("v")).clicked() {
+                    self.dec_minute();
+                }
+            });
+        }).response
     }
 }

@@ -1,4 +1,7 @@
-use egui_timepicker::{TimePickerWatch, TimePickerSimple};
+use egui_timepicker::{TimePickerWatch, 
+                      TimePickerSimple, 
+                      InlineTimePickerSimple
+                    };
 
 fn main() -> eframe::Result<()> {
     let options = eframe::NativeOptions::default();
@@ -12,7 +15,8 @@ fn main() -> eframe::Result<()> {
 #[derive(Default)]
 struct App {
     picker_watch: TimePickerWatch,
-    picker_simple: TimePickerSimple
+    picker_simple: TimePickerSimple,
+    picker_inline: InlineTimePickerSimple
 }
 
 impl eframe::App for App {
@@ -31,7 +35,12 @@ impl eframe::App for App {
         ctx.set_style(style);
 
         egui::CentralPanel::default().show(ctx, |ui| {
+
+            ui.add(egui::Label::new("TimePickerWatch"));
+
             ui.add(&mut self.picker_watch);
+
+            ui.add_space(10.0);
 
             let (hour_watch, minute_watch) = self.picker_watch.time();
 
@@ -42,6 +51,12 @@ impl eframe::App for App {
                 hour_watch, minute_watch
             ));
 
+            ui.add(egui::Separator::default().spacing(20.0));
+
+            ui.add(egui::Label::new("TimePickerSimple"));
+
+            ui.add_space(10.0);
+
             ui.add(&mut self.picker_simple);
 
             let (hour_simple, minute_simple) = self.picker_simple.time();
@@ -51,6 +66,19 @@ impl eframe::App for App {
             ui.label(format!(
                 "Chosen time: {:02}:{:02}",
                 hour_simple, minute_simple 
+            ));
+
+            ui.add(egui::Separator::default().spacing(20.0));
+            ui.add(egui::Label::new("Inline TimePickerSimple"));
+            ui.add_space(10.0);
+
+            ui.add(&mut self.picker_inline);
+            
+            let (hour_inline, minute_inline) = self.picker_inline.time();
+
+            ui.label(format!(
+                "Chosen time: {:02}:{:02}",
+                hour_inline, minute_inline 
             ));
         });
     }
