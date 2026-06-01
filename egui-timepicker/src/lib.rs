@@ -1,7 +1,7 @@
 use egui::*;
 
 #[derive(Clone, Debug)]
-pub struct TimePickerWatch {
+pub struct TimepickerWatchface {
     hour: u8,
     minute: u8,
     open: bool,
@@ -15,13 +15,13 @@ enum DragTarget {
     Minute,
 }
 
-impl Default for TimePickerWatch {
+impl Default for TimepickerWatchface {
     fn default() -> Self {
         Self::new(12, 0)
     }
 }
 
-impl TimePickerWatch {
+impl TimepickerWatchface {
     pub fn new(hour: u8, minute: u8) -> Self {
         Self {
             hour: hour.min(23),
@@ -36,7 +36,7 @@ impl TimePickerWatch {
     }
 }
 
-impl Widget for &mut TimePickerWatch {
+impl Widget for &mut TimepickerWatchface {
     fn ui(self, ui: &mut Ui) -> Response {
         let response = ui.button(format!("{:02}:{:02}", self.hour, self.minute));
 
@@ -75,7 +75,7 @@ impl Widget for &mut TimePickerWatch {
     }
 }
 
-fn draw_clock(ui: &mut Ui, picker: &mut TimePickerWatch) {
+fn draw_clock(ui: &mut Ui, picker: &mut TimepickerWatchface) {
     let size = 220.0;
     let (rect, response) =
         ui.allocate_exact_size(vec2(size, size), Sense::drag());
@@ -178,13 +178,13 @@ fn draw_hand(
 }
 
 #[derive(Clone, Debug)]
-pub struct TimePickerSimple {
+pub struct TimepickerSimple {
     hour: u8,
     minute: u8,
     open: bool,
 }
 
-impl Default for TimePickerSimple {
+impl Default for TimepickerSimple {
     fn default() -> Self {
         Self {
             hour: 12,
@@ -194,7 +194,7 @@ impl Default for TimePickerSimple {
     }
 }
 
-impl TimePickerSimple {
+impl TimepickerSimple {
     pub fn time(&self) -> (u8, u8) {
         (self.hour, self.minute)
     }
@@ -220,7 +220,7 @@ const COL_WIDTH: f32 = 40.0;
 const ROW_HEIGHT: f32 = 32.0;
 
 
-impl Widget for &mut TimePickerSimple {
+impl Widget for &mut TimepickerSimple {
     fn ui(self, ui: &mut Ui) -> Response {
         let response = ui.button(format!("{:02}:{:02}", self.hour, self.minute));
 
@@ -295,12 +295,12 @@ impl Widget for &mut TimePickerSimple {
 }
 
 #[derive(Clone, Debug)]
-pub struct InlineTimePickerSimple {
+pub struct InlineTimepicker {
     hour: u8,
     minute: u8,
 }
 
-impl Default for InlineTimePickerSimple {
+impl Default for InlineTimepicker {
     fn default() -> Self {
         Self {
             hour: 12,
@@ -309,7 +309,7 @@ impl Default for InlineTimePickerSimple {
     }
 }
 
-impl InlineTimePickerSimple {
+impl InlineTimepicker {
     pub fn time(&self) -> (u8, u8) {
         (self.hour, self.minute)
     }
@@ -331,7 +331,7 @@ impl InlineTimePickerSimple {
     }
 }
 
-impl Widget for &mut InlineTimePickerSimple {
+impl Widget for &mut InlineTimepicker {
     fn ui(self, ui: &mut Ui) -> Response {
         ui.horizontal(|ui| {
             // Hour column
